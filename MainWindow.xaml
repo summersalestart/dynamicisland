@@ -1,0 +1,167 @@
+﻿<Window x:Class="DynIsland.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DynIsland" WindowStyle="None" AllowsTransparency="True"
+        Background="Transparent" ShowInTaskbar="False" Topmost="True"
+        ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+        ShowActivated="False" Focusable="False">
+  <Window.Resources>
+    <!-- Lucide icons (https://lucide.dev, ISC license): 24x24 stroke icons. -->
+    <Geometry x:Key="LucidePlay">M6 3 L20 12 L6 21 Z</Geometry>
+    <Geometry x:Key="LucidePause">M6 4 H10 V20 H6 Z M14 4 H18 V20 H14 Z</Geometry>
+    <Geometry x:Key="LucideSkipBack">M19 20 L9 12 L19 4 Z M5 19 V5</Geometry>
+    <Geometry x:Key="LucideSkipForward">M5 4 L15 12 L5 20 Z M19 5 V19</Geometry>
+    <!-- Chromeless buttons: no background/border ever, only opacity feedback -->
+    <Style x:Key="IslandBtn" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/><Setter Property="FontSize" Value="15"/>
+      <Setter Property="Width" Value="34"/><Setter Property="Height" Value="34"/><Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <!-- Transparent (not null): keeps the full 34x34 hit area clickable. -->
+            <Border Background="Transparent">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Opacity" Value="0.65"/></Trigger>
+        <Trigger Property="IsPressed" Value="True"><Setter Property="Opacity" Value="0.4"/></Trigger>
+      </Style.Triggers>
+    </Style>
+  </Window.Resources>
+  <!-- Outer padding: keeps the pill crisp. No DropShadowEffect here:
+       WPF clips effects to the SizeToContent window, which renders as a rectangular halo. -->
+  <Grid Background="Transparent" Margin="0,6,0,14">
+  <Border x:Name="Pill" Background="#000000" CornerRadius="24"
+          HorizontalAlignment="Center" VerticalAlignment="Top"
+          MinWidth="180" MinHeight="38" MaxWidth="560"
+          Opacity="0.96" ClipToBounds="True"
+          BorderBrush="#1EFFFFFF" BorderThickness="1"
+          SnapsToDevicePixels="True" UseLayoutRounding="True">
+    <!-- Translate (not scale): the SizeToContent window clips anything that
+         grows past its bounds, so a scale-up would be invisibly cropped.
+         A small downward dip stays inside the outer padding and is visible. -->
+    <Border.RenderTransform>
+      <TranslateTransform x:Name="HoverDip" Y="0"/>
+    </Border.RenderTransform>
+    <Grid Margin="12,8,12,8">
+      <!-- IDLE: time + (weather | compact song) -->
+      <StackPanel x:Name="IdleView" Orientation="Vertical" VerticalAlignment="Center">
+        <StackPanel.RenderTransform>
+          <TranslateTransform x:Name="IdleShift" Y="0"/>
+        </StackPanel.RenderTransform>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock x:Name="ClockText" Text="10:42 AM" Foreground="White" FontSize="14"
+                     FontWeight="SemiBold" FontFamily="Segoe UI Variable Text, Segoe UI"
+                     Typography.NumeralAlignment="Tabular"
+                     VerticalAlignment="Center"/>
+          <Ellipse x:Name="MusicDot" Width="6" Height="6" Fill="#1ED760" Margin="9,0,0,0"
+                   Visibility="Collapsed" VerticalAlignment="Center"/>
+          <StackPanel x:Name="WeatherGroup" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text=" " FontSize="14"/>
+            <TextBlock x:Name="WeatherGlyph" Text="☀" Foreground="#FFD76A" FontSize="14" VerticalAlignment="Center"/>
+            <TextBlock x:Name="WeatherText" Text="28°C" Foreground="#D7D7DC" FontSize="13"
+                       Margin="5,0,0,0" VerticalAlignment="Center" FontFamily="Segoe UI Variable Text, Segoe UI"
+                       Typography.NumeralAlignment="Tabular"/>
+            <TextBlock x:Name="WeatherCond" Text="Clear" Foreground="#8E8E96" FontSize="11"
+                       Margin="6,0,0,0" VerticalAlignment="Center"/>
+          </StackPanel>
+          <!-- Compact song pill: replaces weather while music plays -->
+          <StackPanel x:Name="MiniMusic" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+            <TextBlock Text=" " FontSize="14"/>
+            <TextBlock Text="♪" Foreground="#1ED760" FontSize="13" VerticalAlignment="Center"/>
+            <TextBlock x:Name="MiniTitle" Text="Song" Foreground="#EDEDF1" FontSize="13"
+                       Margin="5,0,0,0" VerticalAlignment="Center" MaxWidth="170"
+                       TextTrimming="CharacterEllipsis"/>
+            <TextBlock x:Name="MiniLeft" Text="−1:23" Foreground="#8E8E96" FontSize="12"
+                       Margin="7,0,0,0" VerticalAlignment="Center" MinWidth="46"
+                       Typography.NumeralAlignment="Tabular"/>
+          </StackPanel>
+          <!-- Countdown timer pill: shown alongside time while a timer runs -->
+          <StackPanel x:Name="TimerGroup" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+            <TextBlock Text=" " FontSize="14"/>
+            <TextBlock Text="&#x23F1;" Foreground="#FFB020" FontSize="13" VerticalAlignment="Center"/>
+            <TextBlock x:Name="TimerText" Text="9:59" Foreground="#FFD9A0" FontSize="13"
+                       Margin="5,0,0,0" VerticalAlignment="Center"
+                       Typography.NumeralAlignment="Tabular"/>
+          </StackPanel>
+        </StackPanel>
+        <!-- Revealed on hover: island "expands" even with nothing playing -->
+        <TextBlock x:Name="IdleDetail" Text="" Foreground="#8E8E96" FontSize="11"
+                   Margin="0,3,0,0" Visibility="Collapsed" TextTrimming="CharacterEllipsis" Opacity="0">
+          <TextBlock.RenderTransform>
+            <TranslateTransform x:Name="DetailSlide" Y="-4"/>
+          </TextBlock.RenderTransform>
+        </TextBlock>
+      </StackPanel>
+      <!-- MUSIC -->
+      <Grid x:Name="MusicView" Visibility="Collapsed" MinWidth="380" MaxWidth="520">
+        <Grid.RenderTransform>
+          <TranslateTransform x:Name="MusicShift" Y="0"/>
+        </Grid.RenderTransform>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+        <Border Width="48" Height="48" CornerRadius="10" Background="#1C1C22" VerticalAlignment="Center">
+          <Image x:Name="ArtImage" Width="48" Height="48" Stretch="UniformToFill">
+            <Image.Clip><RectangleGeometry Rect="0,0,48,48" RadiusX="10" RadiusY="10"/></Image.Clip>
+          </Image>
+        </Border>
+        <StackPanel Grid.Column="1" Margin="10,0,8,0" VerticalAlignment="Center">
+          <TextBlock x:Name="SongTitle" Text="Song" Foreground="White" FontSize="13" FontWeight="SemiBold"
+                     TextTrimming="CharacterEllipsis" FontFamily="Segoe UI Variable Text, Segoe UI"/>
+          <TextBlock x:Name="SongArtist" Text="Artist" Foreground="#9C9CA5" FontSize="12"
+                     TextTrimming="CharacterEllipsis"/>
+          <Grid Margin="0,5,0,0">
+            <ProgressBar x:Name="Progress" Minimum="0" Maximum="100" Value="20" Height="3"
+                         Background="#2A2A32" Foreground="White" BorderThickness="0"/>
+          </Grid>
+          <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+            <TextBlock x:Name="PosText" Text="1:24" Foreground="#8E8E96" FontSize="10" Typography.NumeralAlignment="Tabular"/>
+            <TextBlock Text="  /  " Foreground="#55555E" FontSize="10"/>
+            <TextBlock x:Name="DurText" Text="3:42" Foreground="#8E8E96" FontSize="10" Typography.NumeralAlignment="Tabular"/>
+            <TextBlock x:Name="SrcText" Text="" Foreground="#4CC38A" FontSize="10" Margin="8,0,0,0"/>
+          </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+          <Button x:Name="PrevBtn" Style="{StaticResource IslandBtn}" Click="Prev_Click" Focusable="False">
+            <Path Data="{StaticResource LucideSkipBack}" Stroke="White" StrokeThickness="2"
+                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  Width="15" Height="15" Stretch="Uniform"/>
+          </Button>
+          <Button x:Name="PlayBtn" Style="{StaticResource IslandBtn}" Click="Play_Click" Focusable="False">
+            <Path Data="{StaticResource LucidePause}" Stroke="White" StrokeThickness="2"
+                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  Width="15" Height="15" Stretch="Uniform"/>
+          </Button>
+          <Button x:Name="NextBtn" Style="{StaticResource IslandBtn}" Click="Next_Click" Focusable="False">
+            <Path Data="{StaticResource LucideSkipForward}" Stroke="White" StrokeThickness="2"
+                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  Width="15" Height="15" Stretch="Uniform"/>
+          </Button>
+        </StackPanel>
+      </Grid>
+      <!-- NOTIFICATION -->
+      <Grid x:Name="NotifView" Visibility="Collapsed" MinWidth="340" MaxWidth="500">
+        <Grid.RenderTransform>
+          <TranslateTransform x:Name="NotifShift" Y="0"/>
+        </Grid.RenderTransform>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="38"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Border x:Name="NotifBadge" Width="32" Height="32" CornerRadius="9" Background="#2A2A35"
+                VerticalAlignment="Top" Margin="0,2,0,0">
+          <TextBlock x:Name="NotifLetter" Text="✉" Foreground="White" FontSize="15"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+          <TextBlock x:Name="NotifApp" Text="App" Foreground="#9C9CA5" FontSize="11" FontWeight="SemiBold"/>
+          <TextBlock x:Name="NotifTitle" Text="Title" Foreground="White" FontSize="13" FontWeight="SemiBold"
+                     TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+          <TextBlock x:Name="NotifBody" Text="Body" Foreground="#C9C9D1" FontSize="12"
+                     TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" MaxWidth="420"/>
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Border>
+  </Grid>
+</Window>

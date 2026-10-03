@@ -1,0 +1,143 @@
+<Window x:Class="DynIsland.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DynIsland Settings" Width="440" Height="660" WindowStartupLocation="CenterScreen"
+        Background="Transparent" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize"
+        Foreground="White" FontFamily="./Fonts/#Inter, Segoe UI Variable Text, Segoe UI"
+        MouseLeftButtonDown="Window_Drag">
+  <Window.Resources>
+    <Style x:Key="IslandX" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#9C9CA5"/>
+      <Setter Property="BorderThickness" Value="0"/><Setter Property="Width" Value="30"/><Setter Property="Height" Value="30"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="Transparent" CornerRadius="8">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="White"/></Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style TargetType="GroupBox">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Margin" Value="0,0,0,10"/>
+      <Setter Property="HeaderTemplate">
+        <Setter.Value>
+          <DataTemplate>
+            <TextBlock Text="{Binding}" Foreground="#8E8E96" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,6"/>
+          </DataTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="TextBox">
+      <Setter Property="Background" Value="#16161B"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="CaretBrush" Value="White"/>
+      <Setter Property="SelectionBrush" Value="#1ED760"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="7,5"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style x:Key="DlgPrimary" TargetType="Button">
+      <Setter Property="Background" Value="#1ED760"/>
+      <Setter Property="Foreground" Value="Black"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}" CornerRadius="8">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#3BE585"/></Trigger>
+        <Trigger Property="IsPressed" Value="True"><Setter Property="Background" Value="#17B653"/></Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style x:Key="DlgGhost" TargetType="Button">
+      <Setter Property="Background" Value="#1B1B21"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}" CornerRadius="8">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#26262E"/></Trigger>
+        <Trigger Property="IsPressed" Value="True"><Setter Property="Background" Value="#141418"/></Trigger>
+      </Style.Triggers>
+    </Style>
+  </Window.Resources>
+  <Border Background="#0A0A0D" CornerRadius="18" BorderBrush="#1EFFFFFF" BorderThickness="1" Margin="8">
+  <ScrollViewer Margin="18" VerticalScrollBarVisibility="Hidden"><StackPanel x:Name="Root" Orientation="Vertical">
+    <Grid Margin="0,0,0,10">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBlock Text="DynIsland Settings" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+      <Button Grid.Column="1" Content="✕" FontSize="13" Style="{StaticResource IslandX}" Click="Close_Click" VerticalAlignment="Top"/>
+    </Grid>
+    <GroupBox Header="GENERAL">
+      <StackPanel Margin="2,0,2,2">
+        <CheckBox x:Name="C_Enabled" Content="Enable Dynamic Island" Margin="0,2"/>
+        <StackPanel Orientation="Horizontal" Margin="0,6,0,0"><TextBlock Text="Island size  " VerticalAlignment="Center"/>
+          <Slider x:Name="S_Scale" Minimum="0.8" Maximum="1.4" Width="180" TickFrequency="0.1"/></StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,4,0,0"><TextBlock Text="Opacity  " VerticalAlignment="Center"/>
+          <Slider x:Name="S_Opacity" Minimum="0.6" Maximum="1" Width="180" TickFrequency="0.05"/></StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,4,0,0"><TextBlock Text="Hotkey: " VerticalAlignment="Center"/>
+          <TextBox x:Name="T_Hotkey" Width="140" VerticalAlignment="Center"/></StackPanel>
+        <TextBlock x:Name="T_HotkeyStatus" Foreground="#E06C5A" Margin="0,2,0,0" Visibility="Collapsed"/>
+      </StackPanel>
+    </GroupBox>
+    <GroupBox Header="TIME"><StackPanel Margin="2,0,2,2">
+      <CheckBox x:Name="C_24h" Content="24-hour format" Margin="0,2"/>
+      <CheckBox x:Name="C_Sec" Content="Show seconds" Margin="0,2"/>
+      <CheckBox x:Name="C_ShowTime" Content="Show time" Margin="0,2"/>
+    </StackPanel></GroupBox>
+    <GroupBox Header="WEATHER"><StackPanel Margin="2,0,2,2">
+      <CheckBox x:Name="C_ShowWx" Content="Show weather" Margin="0,2"/>
+      <CheckBox x:Name="C_AutoLoc" Content="Automatic location" Margin="0,2"/>
+      <StackPanel Orientation="Horizontal"><TextBlock Text="Manual location: "/><TextBox x:Name="T_Loc" Width="200"/></StackPanel>
+      <CheckBox x:Name="C_F" Content="Use Fahrenheit" Margin="0,2"/>
+      <StackPanel Orientation="Horizontal"><TextBlock Text="Refresh (min): "/><TextBox x:Name="T_Refresh" Width="50"/></StackPanel>
+    </StackPanel></GroupBox>
+    <GroupBox Header="MUSIC"><StackPanel Margin="2,0,2,2">
+      <CheckBox x:Name="C_Music" Content="Enable media integration" Margin="0,2"/>
+      <CheckBox x:Name="C_Art" Content="Show album artwork" Margin="0,2"/>
+      <CheckBox x:Name="C_Controls" Content="Show playback controls" Margin="0,2"/>
+    </StackPanel></GroupBox>
+    <GroupBox Header="NOTIFICATIONS"><StackPanel Margin="2,0,2,2">
+      <CheckBox x:Name="C_Notif" Content="Enable notification popups" Margin="0,2"/>
+      <StackPanel Orientation="Horizontal"><TextBlock Text="Display (sec): "/><TextBox x:Name="T_NotifSec" Width="50"/></StackPanel>
+    </StackPanel></GroupBox>
+    <GroupBox Header="TIMER"><StackPanel Margin="2,0,2,2">
+      <StackPanel Orientation="Horizontal"><TextBlock Text="Minutes: "/><TextBox x:Name="T_TimerMin" Width="50"/></StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+        <Button x:Name="B_TimerStart" Content="Start" Width="80" Height="26" Click="TimerStart_Click" Style="{StaticResource DlgPrimary}"/>
+        <Button x:Name="B_TimerCancel" Content="Cancel" Width="80" Height="26" Margin="8,0,0,0" Click="TimerCancel_Click" Style="{StaticResource DlgGhost}"/>
+      </StackPanel>
+      <TextBlock x:Name="T_TimerStatus" Foreground="#8E8E96" Margin="0,4,0,0"/>
+    </StackPanel></GroupBox>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+      <Button Content="Save" Width="90" Height="30" Click="Save_Click" Style="{StaticResource DlgPrimary}"/>
+      <Button Content="Close" Width="90" Height="30" Margin="8,0,0,0" Click="Close_Click" Style="{StaticResource DlgGhost}"/>
+    </StackPanel>
+  </StackPanel></ScrollViewer>
+  </Border>
+</Window>
