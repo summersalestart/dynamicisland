@@ -1,3 +1,19 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./light.png">
+  <img src="./light.png" alt="Your image">
+</picture>
+
+<p align="center">
+  <a href="https://github.com/summersalestart/dynamicisland/releases">
+    <img src="https://img.shields.io/github/downloads/summersalestart/dynamicisland/total?style=for-the-badge&label=Downloads" alt="Downloads">
+  </a>
+  <a href="https://github.com/summersalestart/dynamicisland/releases">
+    <img src="https://img.shields.io/github/v/release/summersalestart/dynamicisland?style=for-the-badge&label=Releases" alt="Releases">
+  </a>
+  <img src="https://img.shields.io/badge/I%20Love-KFC-red?style=for-the-badge&logo=kfc&logoColor=white" alt="I Love KFC">
+</p>
+
 # DynIsland for Windows
 
 An iPhone-style Dynamic Island overlay for Windows. A native, lightweight WPF app
