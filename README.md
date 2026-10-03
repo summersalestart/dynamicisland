@@ -17,8 +17,8 @@
 # DynIsland for Windows
 
 An iPhone-style Dynamic Island overlay for Windows. A native, lightweight WPF app
-(.NET 10, no Electron): a top-center always-on-top pill that shows the time and
-weather at rest, expands for music, notifications, and timers, then settles back.
+(.NET 10, no Electron) a top-center always on top pill that shows the time and
+weather at rest, expands for music, notifications, and timers, then settles back
 
 ## Download
 
@@ -27,30 +27,30 @@ Get the latest zip from [**Releases**](../../releases)
 > Windows SmartScreen will warn about an unknown publisher (the build is unsigned).
 > Click **More info → Run anyway**. Only a paid codesigning cert removes that prompt
 
-No installer needed: first launch auto-registers startup (HKCU Run), creates
-`%AppData%\DynIsland\`, and puts an icon in the tray.
+No installer needed first launch auto-registers startup (HKCU Run), creates
+`%AppData%\DynIsland\`, and puts an icon in the tray
 
 ## Features
 
-- **Idle pill** — live local time (12/24h, seconds optional) plus weather via
+- **Idle pill**: live local time (12/24h, seconds optional) plus weather via
   Open-Meteo: automatic location via ip-api, manual city or `lat, lon` in Settings,
   cached and refreshed every N minutes, last-known shown offline.
-- **Music** — any Windows SMTC source (Spotify, Chrome, Edge, …): title/artist,
+- **Music**": any Windows SMTC source (Spotify, Chrome, Edge, …): title/artist,
   album art (crossfaded), position/duration with a gliding progress bar, and working
-  ⏮ ▶/⏸ ⏭ controls. Expands when playback starts, settles to a compact pill with a
+  ⏮ ▶/⏸ ⏭ controls Expands when playback starts, settles to a compact pill with a
   green dot while paused.
-- **Notifications** — Windows toast popups are mirrored onto the island (app name +
+- **Notifications**: Windows toast popups are mirrored onto the island (app name +
   title + body) for N seconds. Capture combines the `UserNotificationListener` API
   (where package identity allows) with a UI-Automation toast watcher plus a 1.2 s
   snapshot poll that catches popups whose open event was missed.
-- **Timer** — native island countdown from tray presets (1–60 min) or Settings:
-  live remaining time in the pill, hover detail, time's-up card + beeps, survives restarts.
-- **Island behavior** — global `Ctrl+Shift+D` toggle (remappable in Settings),
+- **Timer**: native island countdown from tray presets (1–60 min) or Settings:
+  live remaining time in the pill, hover detail, time's-up card + beeps, survives restarts
+- **Island behavior**: global `Ctrl+Shift+D` toggle (remappable in Settings),
   hover to expand (pill dips, border glows, detail fades in), smooth size morphs
   between states with an automatic low-animation mode on weak GPUs / RDP.
-- **Tray & Settings** — dark pill-matched theme throughout: tray menu (double-click
+- **Tray & Settings**: dark pill-matched theme throughout: tray menu (double-click
   opens Settings), borderless Inter-type Settings panel, everything persisted to
-  `%AppData%\DynIsland\settings.json`. Diagnostics at `%AppData%\DynIsland\notif-debug.log`.
+  `%AppData%\DynIsland\settings.json`.
 
 ## Build from source
 
@@ -87,11 +87,8 @@ app/
 ## Limitations (honest)
 
 - Unpackaged exe, so the official notification-history API is unavailable: only
-  toasts **while their popup is visible** can be mirrored, not silent history items.
-  Packaging as MSIX would fix that (it grants package identity).
-- Transparent layered-window resize animation is GPU-dependent; weak GPUs/RDP get
-  short fades instead of full morphs by design.
-- No Apple assets used. Inter is bundled under the SIL Open Font License.
+  toasts **while their popup is visible** can be mirrored, not silent history items
+- Transparent layered-window resize animation is GPU-dependent
 
 ## Privacy
 
