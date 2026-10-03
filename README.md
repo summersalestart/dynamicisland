@@ -4,20 +4,12 @@ An iPhone-style Dynamic Island overlay for Windows. A native, lightweight WPF ap
 (.NET 10, no Electron): a top-center always-on-top pill that shows the time and
 weather at rest, expands for music, notifications, and timers, then settles back.
 
-![screenshot](docs/screenshot.png)
-*(Take a screenshot of the island idle + expanded and drop it at `docs/screenshot.png`.)*
-
 ## Download
 
-Get the latest zip from [**Releases**](../../releases) — two flavors:
-
-| File | Size | Needs |
-|---|---|---|
-| `DynIsland-1.0.0-win-x64-light.zip` | ~7 MB | [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (free, one-time) |
-| `DynIsland-1.0.0-win-x64.zip` | ~73 MB | Nothing — self-contained, just unzip and run |
+Get the latest zip from [**Releases**](../../releases)
 
 > Windows SmartScreen will warn about an unknown publisher (the build is unsigned).
-> Click **More info → Run anyway**. Only a paid code-signing cert removes that prompt.
+> Click **More info → Run anyway**. Only a paid codesigning cert removes that prompt
 
 No installer needed: first launch auto-registers startup (HKCU Run), creates
 `%AppData%\DynIsland\`, and puts an icon in the tray.
@@ -87,10 +79,10 @@ app/
 
 ## Privacy
 
-No telemetry, no accounts, no cloud. Settings and logs stay in `%AppData%\DynIsland\`.
+No telemetry, Settings and logs stay in `%AppData%\DynIsland\`.
 Network calls only: Open-Meteo (weather), ip-api (coarse location, auto mode only),
 and Open-Meteo geocoding (only when you type a manual city).
 
 ## License
 
-No license file yet — add one (MIT recommended) before accepting contributions.
+MIT
